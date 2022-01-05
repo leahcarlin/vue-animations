@@ -1,7 +1,6 @@
 <template>
   <div class="about">
     <transition
-      name="fade"
       appear
       @before-enter="beforeEnter"
       @enter="enter"
@@ -9,6 +8,7 @@
     >
       <h1 v-if="showTitle">About</h1>
     </transition>
+
     <p>
       Lorem ipsum dolor sit amet consectetur adipisicing elit. Cum aperiam
       officia possimus delectus inventore quod quisquam culpa voluptas iusto,
@@ -32,15 +32,39 @@
 
 <script>
 import { ref } from "@vue/reactivity";
+import gsap from "gsap";
+
 export default {
   setup() {
     const showTitle = ref(true);
-    const beforeEnter = () => {};
-    const enter = () => {};
-    const afterEnter = () => {
-      setTimeout(() => (showTitle.value = false), 2000);
+    const beforeEnter = (el) => {
+      el.style.transform = "translateY(-60px)";
+      el.style.opacity = 0;
     };
-    return { showTitle, beforeEnter, enter, afterEnter };
+    const enter = (el, done) => {
+      gsap.to(el, {
+        // define the element, then CSS properties
+        y: 0,
+        opacity: 1,
+        duration: 1, // second
+        ease: "bounce.out", // bounce effect
+        onComplete: done,
+      });
+    };
+    const afterEnter = (el) => {};
+
+    const beforeLeave = () => {};
+    const leave = () => {};
+    const afterLeave = () => {};
+    return {
+      showTitle,
+      beforeEnter,
+      enter,
+      afterEnter,
+      beforeLeave,
+      leave,
+      afterLeave,
+    };
   },
 };
 </script>
@@ -49,13 +73,5 @@ export default {
 .about {
   max-width: 600px;
   margin: 20px auto;
-}
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
-}
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 3s ease;
 }
 </style>
